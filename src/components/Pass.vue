@@ -6,6 +6,7 @@
         <input type="password" 
                 id="password-input" 
                 class="password-input"
+                v-model="password"
         >
         <div class="progress-bar-container">
             <div class="progress-bar">
@@ -15,20 +16,33 @@
         <div class="power-text">
 
         </div>
-        <div class="requirement">
+        <div class="requirement"
+            v-if="password.length > 0"
+        >
             <p>Требования к паролю: </p>
             <ul>
-                <li>Минимум 8 символов</li>
-                <li>Содержит заглавные буквы</li>
-                <li>Содержит строчные буквы</li>
-                <li>Содержит цифры</li>
-                <li>Содержит специальные символы</li>
+                <li :class="{'met': hasMinLength}">Минимум 8 символов</li>
+                <li :class="{'met': hasUppercase}">Содержит заглавные буквы</li>
+                <li :class="{'met': hasLowercase}">Содержит строчные буквы</li>
+                <li :class="{'met': hasDigits}">Содержит цифры</li>
+                <li :class="{'met': hasSpecialChars}">Содержит специальные символы</li>
             </ul>
         </div>
     </div>
 </template>
 
 <script setup>
+    import { ref, computed, watch } from 'vue';
+
+    const password = ref('');
+
+    // Критерии проверки пароля
+    const hasMinLength = computed(() => password.value.length >= 8);
+    const hasUppercase = computed(() => /[A-Z]/.test(password.value));
+    const hasLowercase = computed(() => /[a-z]/.test(password.value));
+    const hasSpecialChars = computed(() => /[!@#$%^&*(),.?":{}|<>]/.test(password.value));
+    const hasDigits = computed(() => /\d/.test(password.value));
+
 
 </script>
 
