@@ -7,14 +7,20 @@
                 id="password-input" 
                 class="password-input"
                 v-model="password"
+                placeholder="Введите пароль"
         >
         <div class="progress-bar-container">
-            <div class="progress-bar">
+            <div class="progress-bar"
+                :style="progressBarStyle"
+                :class="strengthClass"
+            >
 
             </div>
         </div>
-        <div class="power-text">
-
+        <div class="power-text"
+            :class="strengthClass"
+        >
+            {{ powerText }}
         </div>
         <div class="requirement"
             v-if="password.length > 0"
@@ -43,16 +49,65 @@
     const hasSpecialChars = computed(() => /[!@#$%^&*(),.?":{}|<>]/.test(password.value));
     const hasDigits = computed(() => /\d/.test(password.value));
 
+    // Подсчет выполнения критериев
+    const criterialCount = computed(() => {
+        return [
+            hasMinLength.value,
+            hasUppercase.value,
+            hasLowercase.value,
+            hasSpecialChars.value,
+            hasDigits.value
+        ].filter(Boolean).length
+    });
+
+    // Процент выполнения
+    const powerPercent = computed(() => {
+        return (criterialCount / 5) * 100;
+    });
+    
+    // Определение уровня надежности
+    const strengthLevel = computed(() => {
+        if (criterialCount.value === 0) return 0
+        if (criterialCount.value <= 2) return 1 // Слабый
+        if (criterialCount.value <= 4) return 2 // Средний
+        return 3 // Сильный
+    })
+
+    // Стиль прогресс-бара
+    const progressBarStyle = computed(() => ({
+        width: `${powerPercent.value}%`
+    }))
+
+// Класс для стилизации по уровню надежности
+    const strengthClass = computed(() => {
+    switch (strengthLevel.value) {
+        case 1: return 'weak'
+        case 2: return 'medium'
+        case 3: return 'strong'
+        default: return ''
+    }
+    })
+
+// Текст описания надежности
+const powerText = computed(() => {
+  switch (strengthLevel.value) {
+    case 1: return 'Слабый пароль'
+    case 2: return 'Средний пароль'
+    case 3: return 'Надежный пароль'
+    default: return 'Введите пароль'
+  }
+})
+
 
 </script>
 
 <style scoped>
     .password-power {
-  max-width: 400px;
-  margin: 20px auto;
-  padding: 20px;
-  font-family: Arial, sans-serif;
-}
+        max-width: 400px;
+        margin: 20px auto;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+    }
 
 .password-input {
   width: 100%;
