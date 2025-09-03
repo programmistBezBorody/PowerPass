@@ -13,9 +13,7 @@
             <div class="progress-bar"
                 :style="progressBarStyle"
                 :class="strengthClass"
-            >
-
-            </div>
+            ></div>
         </div>
         <div class="power-text"
             :class="strengthClass"
@@ -62,7 +60,7 @@
 
     // Процент выполнения
     const powerPercent = computed(() => {
-        return (criterialCount / 5) * 100;
+        return (criterialCount.value / 5) * 100;
     });
     
     // Определение уровня надежности
